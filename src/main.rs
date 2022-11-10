@@ -16,7 +16,6 @@ enum VrotErr {
     RustylineInitFailed,
     RustylineInternalErr,
     JsonParseFailed,
-    FileNotFound,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
