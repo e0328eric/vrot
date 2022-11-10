@@ -1,0 +1,23 @@
+[package]
+name = "vrot"
+version = "0.1.0"
+authors = ["Sungbae Jeong <almagest0328@gmail.com>"]
+description = "Memorizing vocabulary helper"
+license = "MIT"
+edition = "2021"
+
+[profile.dev]
+opt-level = 0
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 'z'
+panic = "abort"
+strip = true
+
+[dependencies]
+rand = "0.8.5"
+rustyline = { version = "10.0.0", features = ["signal-hook"] }
+serde = { version = "1.0.147", features = ["derive"] }
+serde_yaml = "0.9.14"

@@ -1,0 +1,55 @@
+- word: exploit
+  info:
+    - meaning: (부당하게) 이용하다
+      synos:
+        - utilize
+        - use
+        - make use of
+        - take advantage of
+- word: account for
+  info:
+    - meaning: (이유 등을) 설명하다
+      synos:
+        - explain
+        - justify
+        - give a reason for
+    - meaning: (부분, 비율을) 차지하다
+      synos:
+        - make up
+        - comprise
+        - constitute
+    - meaning: 원인이 되다
+      synos:
+        - cause
+- word: particular
+  info:
+    - meaning: 특정한; 특별한
+      synos:
+        - specific
+        - special
+- word: prominant
+  info:
+    - meaning: 눈에 띄는
+      synos:
+        - noticeable
+        - conspicuous
+        - outstanding
+        - remarkable
+    - meaning: 중요한
+      synos:
+        - important
+        - leading
+        - notable
+- word: replenish
+  info:
+    - meaning: 보충하다
+      synos:
+        - refill
+        - restore
+        - renew
+- word: indigenous
+  info:
+    - meaning: 토착의
+      synos:
+        - native
+        - aboriginal
