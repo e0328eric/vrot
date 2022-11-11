@@ -1,8 +1,15 @@
 use std::fs;
 use std::io::{self, prelude::*};
 
+use clap::Parser;
 use rand::prelude::*;
-use rustyline::{error::ReadlineError, Editor};
+use rustyline::{
+    completion::FilenameCompleter,
+    config::{CompletionType, Config},
+    error::ReadlineError,
+    Editor,
+};
+use rustyline_derive::{Completer, Helper, Highlighter, Hinter, Validator};
 use serde::{Deserialize, Serialize};
 
 const FILENAME_INPUT_PROMPT: &str = "Enter filenames: ";
@@ -10,12 +17,19 @@ const MAIN_PROMPT: &str = "Do you know this word? (q/y/N): ";
 const INIT_BUFFER_CAPACITY: usize = 100 * 100;
 const STDOUT_BUFFER_CAPACITY: usize = 200 * 100;
 
+#[derive(Parser)]
+#[command(author, version, about)]
+struct VrotFlags {
+    #[arg(long = "fuzzy")]
+    is_fuzzy: bool,
+}
+
 #[derive(Debug)]
 enum VrotErr {
     IOErr(std::io::Error),
     RustylineInitFailed,
     RustylineInternalErr,
-    JsonParseFailed,
+    YamlParseFailed,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -30,6 +44,12 @@ struct VocaInfo {
     synos: Vec<String>,
 }
 
+#[derive(Helper, Completer, Hinter, Validator, Highlighter)]
+struct VrotHelper {
+    #[rustyline(Completer)]
+    completer: FilenameCompleter,
+}
+
 impl From<std::io::Error> for VrotErr {
     fn from(err: std::io::Error) -> Self {
         Self::IOErr(err)
@@ -37,13 +57,29 @@ impl From<std::io::Error> for VrotErr {
 }
 
 fn main() -> Result<(), VrotErr> {
-    let Ok(mut rl) = Editor::<()>::new() else {
+    // Initial State of Vrot
+    let cli = VrotFlags::parse();
+
+    let config = Config::builder()
+        .completion_type(if cli.is_fuzzy {
+            CompletionType::Fuzzy
+        } else {
+            CompletionType::Circular
+        })
+        .build();
+    let helper = VrotHelper {
+        completer: FilenameCompleter::new(),
+    };
+
+    let Ok(mut take_file_rl) = Editor::with_config(config) else {
         return Err(VrotErr::RustylineInitFailed);
     };
+    take_file_rl.set_helper(Some(helper));
 
     let mut stdout_buf = io::BufWriter::with_capacity(STDOUT_BUFFER_CAPACITY, io::stdout());
 
-    let filename_input = rl.readline(FILENAME_INPUT_PROMPT);
+    // Taking files
+    let filename_input = take_file_rl.readline(FILENAME_INPUT_PROMPT);
     let mut buf = String::with_capacity(INIT_BUFFER_CAPACITY);
     match filename_input {
         Ok(filenames) => read_to_string_from_files(&mut buf, &filenames)?,
@@ -58,7 +94,7 @@ fn main() -> Result<(), VrotErr> {
         Ok(vocas) => vocas,
         Err(err) => {
             eprintln!("{err:?}");
-            return Err(VrotErr::JsonParseFailed);
+            return Err(VrotErr::YamlParseFailed);
         }
     };
 
@@ -66,10 +102,13 @@ fn main() -> Result<(), VrotErr> {
     let mut idx: usize;
 
     println!("\x1b[2J\x1b[H");
+    let Ok(mut main_rl) = Editor::<()>::new() else {
+        return Err(VrotErr::RustylineInitFailed);
+    };
     loop {
         idx = rng.gen_range(0..vocas.len());
         display_voca_word(&mut stdout_buf, &vocas, idx)?;
-        let readline = rl.readline(MAIN_PROMPT);
+        let readline = main_rl.readline(MAIN_PROMPT);
         println!("");
         match readline {
             Ok(val) => match val.as_str() {
