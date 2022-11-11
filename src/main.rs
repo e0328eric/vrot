@@ -20,8 +20,8 @@ const STDOUT_BUFFER_CAPACITY: usize = 200 * 100;
 #[derive(Parser)]
 #[command(author, version, about)]
 struct VrotFlags {
-    #[arg(long = "fuzzy")]
-    is_fuzzy: bool,
+    #[arg(long = "cycle")]
+    is_not_fuzzy: bool,
 }
 
 #[derive(Debug)]
@@ -41,7 +41,7 @@ struct Voca {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct VocaInfo {
     meaning: String,
-    synos: Vec<String>,
+    synos: Option<Vec<String>>,
 }
 
 #[derive(Helper, Completer, Hinter, Validator, Highlighter)]
@@ -61,10 +61,10 @@ fn main() -> Result<(), VrotErr> {
     let cli = VrotFlags::parse();
 
     let config = Config::builder()
-        .completion_type(if cli.is_fuzzy {
-            CompletionType::Fuzzy
-        } else {
+        .completion_type(if cli.is_not_fuzzy {
             CompletionType::Circular
+        } else {
+            CompletionType::Fuzzy
         })
         .build();
     let helper = VrotHelper {
@@ -165,9 +165,12 @@ fn show_answer(
 ) -> io::Result<()> {
     let infos = &vocas[idx].info;
     for (i, info) in infos.iter().enumerate() {
-        writeln!(stdout, "  Info {i}")?;
-        writeln!(stdout, "  Meaning: {}", &info.meaning)?;
-        writeln!(stdout, "  Synonyms: {}\n", join(&info.synos))?;
+        write!(stdout, "  Info {i}\n")?;
+        write!(stdout, "  Meaning: {}\n", &info.meaning)?;
+        if let Some(ref synos) = info.synos {
+            write!(stdout, "  Synonyms: {}\n", join(synos))?;
+        }
+        write!(stdout, "\n")?;
     }
 
     Ok(())
