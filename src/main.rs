@@ -172,7 +172,7 @@ fn show_answer(
             write!(stdout, "  Synonyms: {}\n", join_string(synos))?;
         }
         if let Some(ref example) = info.example {
-            write!(stdout, "Example: {example}\n")?;
+            write!(stdout, "  Example: {example}\n")?;
         }
         write!(stdout, "\n")?;
     }
