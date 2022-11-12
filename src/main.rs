@@ -42,6 +42,7 @@ struct Voca {
 struct VocaInfo {
     meaning: String,
     synos: Option<Vec<String>>,
+    example: Option<String>,
 }
 
 #[derive(Helper, Completer, Hinter, Validator, Highlighter)]
@@ -168,15 +169,19 @@ fn show_answer(
         write!(stdout, "  Info {i}\n")?;
         write!(stdout, "  Meaning: {}\n", &info.meaning)?;
         if let Some(ref synos) = info.synos {
-            write!(stdout, "  Synonyms: {}\n", join(synos))?;
+            write!(stdout, "  Synonyms: {}\n", join_string(synos))?;
+        }
+        if let Some(ref example) = info.example {
+            write!(stdout, "Example: {example}\n")?;
         }
         write!(stdout, "\n")?;
     }
+    stdout.flush()?;
 
     Ok(())
 }
 
-fn join(strings: &[String]) -> String {
+fn join_string(strings: &[String]) -> String {
     let mut output = String::with_capacity(strings.len() * 25);
     for s in strings {
         output += s;
