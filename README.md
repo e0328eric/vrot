@@ -1,2 +1,0 @@
-# vrot
-Memorizing vocabulary helper

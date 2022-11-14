@@ -1,3 +1,9 @@
+// Copyright (c) 2022 Sungbae Jeong
+// 
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
+
 use std::fs;
 use std::io::{self, prelude::*};
 
