@@ -5,6 +5,10 @@
 
 import init, { Voca, rand } from "@pkg/vrot.js";
 
+class Idx {
+    idx: number = 0;
+};
+
 function readFilesAsText(file: File) {
     return new Promise((resolve, reject) => {
         let fr = new FileReader();
@@ -24,57 +28,48 @@ function main(values: unknown[]) {
     let mainVoca = document.querySelector("#main-voca") as Element;
     let knownButton = document.querySelector("#known-word") as Element;
     let unknownButton = document.querySelector("#unknown-word") as Element;
-    let answer = document.querySelector("#voca-answer") as HTMLDivElement;
-
-    let idx = rand(vocasLen);
-    mainVoca.textContent = vocas[idx].word;
-
-    knownButton.addEventListener("click", () => {
-        answer.style.display = "none";
-        idx = rand(vocasLen);
-        mainVoca.textContent = vocas[idx].word;
-    });
-    unknownButton.addEventListener("click", () => unknownButtonHandler(vocas, idx, answer));
-}
-
-function unknownButtonHandler(vocas: any[], vocaIdx: number, answer: HTMLDivElement) {
     let prevAnswer = document.querySelector("#prev-answer") as HTMLButtonElement;
     let nextAnswer = document.querySelector("#next-answer") as HTMLButtonElement;
+    let answer = document.querySelector("#voca-answer") as HTMLDivElement;
 
+    let vocaIdx = rand(vocasLen);
     let infoLen = vocas[vocaIdx].info.length;
     let idx = 0;
 
-    nextAnswer.style.display = infoLen <= 1 ? "none" : "block";
-    showAnswer(vocas, vocaIdx, answer, idx);
+    mainVoca.textContent = vocas[vocaIdx].word;
+
+    knownButton.addEventListener("click", () => {
+        answer.style.display = "none";
+        vocaIdx = rand(vocasLen);
+        mainVoca.textContent = vocas[vocaIdx].word;
+        infoLen = vocas[vocaIdx].info.length;
+        idx = 0;
+    });
+
+    unknownButton.addEventListener("click", () => {
+        prevAnswer.style.display = "none";
+        nextAnswer.style.display = infoLen <= 1 ? "none" : "block";
+        showAnswer(vocas, vocaIdx, answer, idx);
+    });
 
     prevAnswer.addEventListener("click", () => {
-        if (idx > 0) {
-            idx -= 1;
-        }
+        if (idx > 0) { idx -= 1; }
 
+        console.log(idx);
         showAnswer(vocas, vocaIdx, answer, idx);
 
-        if (idx <= 0) {
-            prevAnswer.style.display = "none";
-        }
-        if (idx + 1 < infoLen) {
-            nextAnswer.style.display = "block";
-        }
+        if (idx <= 0) { prevAnswer.style.display = "none"; }
+        if (idx + 1 < infoLen) { nextAnswer.style.display = "block"; }
     });
 
     nextAnswer.addEventListener("click", () => {
-        if (idx + 1 < infoLen) {
-            idx += 1;
-        }
+        if (idx + 1 < infoLen) { idx += 1; }
 
+        console.log(idx);
         showAnswer(vocas, vocaIdx, answer, idx);
 
-        if (idx > 0) {
-            prevAnswer.style.display = "block";
-        }
-        if (idx + 1 >= infoLen) {
-            nextAnswer.style.display = "none";
-        }
+        if (idx > 0) { prevAnswer.style.display = "block"; }
+        if (idx + 1 >= infoLen) { nextAnswer.style.display = "none"; }
     });
 }
 
