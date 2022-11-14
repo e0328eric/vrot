@@ -3,6 +3,7 @@ name = "vrot"
 version = "0.2.0"
 authors = ["Sungbae Jeong <almagest0328@gmail.com>"]
 description = "Memorizing vocabulary helper"
+repository = "https://github.com/e0328eric/vrot.git"
 license = "MIT"
 edition = "2021"
 
