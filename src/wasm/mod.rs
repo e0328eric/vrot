@@ -7,6 +7,11 @@ use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
+extern "C" {
+    fn alert(s: &str);
+}
+
+#[wasm_bindgen]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Voca {
     voca: Vec<Word>,
@@ -29,13 +34,24 @@ pub struct WordInfo {
 
 #[wasm_bindgen]
 impl Voca {
-    pub fn new(toml_string: &str) -> Result<JsValue, JsValue> {
+    pub fn new(toml_string: &str) -> JsValue {
         let voca: Voca = match toml::from_str(toml_string) {
             Ok(voca) => voca,
-            Err(err) => return Err(JsValue::from_str(Box::leak(Box::new(format!("{err}"))))),
+            Err(_) => {
+                alert(&format!(
+                    "Failed to parse a toml files. Check that members name are correct."
+                ));
+                return JsValue::NULL;
+            }
         };
 
-        Ok(serde_wasm_bindgen::to_value(&voca)?)
+        match serde_wasm_bindgen::to_value(&voca) {
+            Ok(val) => val,
+            Err(err) => {
+                alert(&format!("{err}"));
+                JsValue::NULL
+            }
+        }
     }
 }
 
