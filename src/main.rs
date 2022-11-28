@@ -1,8 +1,7 @@
 // Copyright (c) 2022 Sungbae Jeong
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
-
 
 use std::fs;
 use std::io::{self, prelude::*};
@@ -40,12 +39,17 @@ enum VrotErr {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Voca {
-    word: String,
-    info: Vec<VocaInfo>,
+    voca: Vec<Word>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct VocaInfo {
+struct Word {
+    word: String,
+    info: Vec<WordInfo>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct WordInfo {
     meaning: String,
     synos: Option<Vec<String>>,
     example: Option<String>,
@@ -97,8 +101,8 @@ fn main() -> Result<(), VrotErr> {
         }
     }
 
-    let vocas: Vec<Voca> = match serde_yaml::from_str(&buf) {
-        Ok(vocas) => vocas,
+    let voca: Voca = match toml::from_str(&buf) {
+        Ok(voca) => voca,
         Err(err) => {
             eprintln!("{err:?}");
             return Err(VrotErr::YamlParseFailed);
@@ -113,15 +117,15 @@ fn main() -> Result<(), VrotErr> {
         return Err(VrotErr::RustylineInitFailed);
     };
     loop {
-        idx = rng.gen_range(0..vocas.len());
-        display_voca_word(&mut stdout_buf, &vocas, idx)?;
+        idx = rng.gen_range(0..voca.voca.len());
+        display_voca_word(&mut stdout_buf, &voca, idx)?;
         let readline = main_rl.readline(MAIN_PROMPT);
         println!("");
         match readline {
             Ok(val) => match val.as_str() {
                 "q" | "quit" => break,
                 "y" | "Y" => continue,
-                _ => show_answer(&mut stdout_buf, &vocas, idx)?,
+                _ => show_answer(&mut stdout_buf, &voca, idx)?,
             },
             Err(ReadlineError::Interrupted | ReadlineError::Eof) => break,
             Err(err) => {
@@ -147,9 +151,10 @@ fn read_to_string_from_files(buf: &mut String, files: &str) -> Result<(), VrotEr
 
 fn display_voca_word(
     stdout: &mut io::BufWriter<io::Stdout>,
-    vocas: &[Voca],
+    voca: &Voca,
     idx: usize,
 ) -> io::Result<()> {
+    let vocas = &voca.voca;
     let word = &vocas[idx].word;
     writeln!(
         stdout,
@@ -165,11 +170,8 @@ fn display_voca_word(
     Ok(())
 }
 
-fn show_answer(
-    stdout: &mut io::BufWriter<io::Stdout>,
-    vocas: &[Voca],
-    idx: usize,
-) -> io::Result<()> {
+fn show_answer(stdout: &mut io::BufWriter<io::Stdout>, voca: &Voca, idx: usize) -> io::Result<()> {
+    let vocas = &voca.voca;
     let infos = &vocas[idx].info;
     for (i, info) in infos.iter().enumerate() {
         write!(stdout, "  Info {i}\n")?;

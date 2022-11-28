@@ -1,6 +1,6 @@
 [package]
 name = "vrot"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Sungbae Jeong <almagest0328@gmail.com>"]
 description = "Memorizing vocabulary helper"
 repository = "https://github.com/e0328eric/vrot.git"
@@ -19,7 +19,7 @@ strip = true
 
 [dependencies]
 serde = { version = "1.0.147", features = ["derive"] }
-serde_yaml = "0.9.14"
+toml = "0.5.9"
 
 [target.'cfg(target_family = "wasm")'.dependencies]
 rand = "0.8.5"

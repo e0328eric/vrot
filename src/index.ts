@@ -19,11 +19,12 @@ function readFilesAsText(file: File) {
 }
 
 function main(values: unknown[]) {
-    let yamlStr = "";
+    let tomlStr = "";
     for (var value of values) {
-        yamlStr += value;
+        tomlStr += value;
     }
-    let vocas = Voca.new(yamlStr) as any[];
+    let voca = Voca.new(tomlStr);
+    let vocas = voca.voca;
     const vocasLen = vocas.length;
     let mainVoca = document.querySelector("#main-voca") as Element;
     let knownButton = document.querySelector("#known-word") as Element;
@@ -109,7 +110,7 @@ function showAnswer(vocas: any[], vocaIdx: number, answer: HTMLDivElement, idx: 
 // Main actor
 const runWasm = async () => {
     await init();
-    const fileSelector = document.querySelector("#yaml-reader") as Element;
+    const fileSelector = document.querySelector("#file-reader") as Element;
     fileSelector.addEventListener('change', (event) => {
         let fileList = event.target as HTMLInputElement;
         let readers = [];
