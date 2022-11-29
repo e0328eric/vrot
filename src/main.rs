@@ -34,7 +34,7 @@ enum VrotErr {
     IOErr(std::io::Error),
     RustylineInitFailed,
     RustylineInternalErr,
-    YamlParseFailed,
+    TomlParseFailed,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -105,7 +105,7 @@ fn main() -> Result<(), VrotErr> {
         Ok(voca) => voca,
         Err(err) => {
             eprintln!("{err:?}");
-            return Err(VrotErr::YamlParseFailed);
+            return Err(VrotErr::TomlParseFailed);
         }
     };
 
