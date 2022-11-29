@@ -37,9 +37,9 @@ impl Voca {
     pub fn new(toml_string: &str) -> JsValue {
         let voca: Voca = match toml::from_str(toml_string) {
             Ok(voca) => voca,
-            Err(_) => {
+            Err(err) => {
                 alert(&format!(
-                    "Failed to parse a toml files. Check that members name are correct."
+                    "Failed to parse a toml files. Check that members name are correct.\n{err}"
                 ));
                 return JsValue::NULL;
             }
