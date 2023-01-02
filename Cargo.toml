@@ -1,6 +1,6 @@
 [package]
 name = "vrot"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["Sungbae Jeong <almagest0328@gmail.com>"]
 description = "Memorizing vocabulary helper"
 repository = "https://github.com/e0328eric/vrot.git"

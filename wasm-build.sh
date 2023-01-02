@@ -6,5 +6,5 @@
 # https://opensource.org/licenses/MIT
 
 wasm-pack build --target web -d vrot-web/pkg
-tsc -p tsconfig.json && tsc-alias -p tsconfig.json
+cp src/index.js vrot-web
 rm vrot-web/pkg/.gitignore

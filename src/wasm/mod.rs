@@ -33,6 +33,12 @@ pub struct WordInfo {
 }
 
 #[wasm_bindgen]
+#[derive(Serialize, Deserialize)]
+pub struct HashSet {
+    inner: std::collections::HashSet<usize>,
+}
+
+#[wasm_bindgen]
 impl Voca {
     pub fn new(toml_string: &str) -> JsValue {
         let voca: Voca = match toml::from_str(toml_string) {
@@ -52,6 +58,27 @@ impl Voca {
                 JsValue::NULL
             }
         }
+    }
+}
+
+#[wasm_bindgen]
+impl HashSet {
+    pub fn new() -> Self {
+        Self {
+            inner: std::collections::HashSet::new(),
+        }
+    }
+
+    pub fn insert(&mut self, item: usize) {
+        self.inner.insert(item);
+    }
+
+    pub fn contains(&self, item: usize) -> bool {
+        self.inner.contains(&item)
+    }
+
+    pub fn clear(&mut self) {
+        self.inner.clear();
     }
 }
 
