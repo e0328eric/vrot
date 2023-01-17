@@ -1,6 +1,6 @@
 [package]
 name = "vrot"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["Sungbae Jeong <almagest0328@gmail.com>"]
 description = "Memorizing vocabulary helper"
 repository = "https://github.com/e0328eric/vrot.git"
@@ -32,3 +32,4 @@ rand = "0.8.5"
 clap = { version = "4.0.22", features = ["derive"] }
 rustyline = { version = "10.0.0", features = ["signal-hook", "with-fuzzy"] }
 rustyline-derive = "0.7.0"
+itertools = "0.10"

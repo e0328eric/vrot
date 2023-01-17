@@ -5,8 +5,10 @@
 
 use std::fs;
 use std::io::{self, prelude::*};
+use std::path::PathBuf;
 
 use clap::Parser;
+use itertools::Itertools;
 use rand::prelude::*;
 use rustyline::{
     completion::FilenameCompleter,
@@ -27,6 +29,7 @@ const STDOUT_BUFFER_CAPACITY: usize = 200 * 100;
 struct VrotFlags {
     #[arg(long = "cycle")]
     is_not_fuzzy: bool,
+    filenames: Vec<PathBuf>,
 }
 
 #[derive(Debug)]
@@ -90,7 +93,15 @@ fn main() -> Result<(), VrotErr> {
     let mut stdout_buf = io::BufWriter::with_capacity(STDOUT_BUFFER_CAPACITY, io::stdout());
 
     // Taking files
-    let filename_input = take_file_rl.readline(FILENAME_INPUT_PROMPT);
+    let filename_input = if cli.filenames.is_empty() {
+        take_file_rl.readline(FILENAME_INPUT_PROMPT)
+    } else {
+        Ok(cli
+            .filenames
+            .iter()
+            .map(|path_buf| path_buf.to_string_lossy().to_owned())
+            .join(" "))
+    };
     let mut buf = String::with_capacity(INIT_BUFFER_CAPACITY);
     match filename_input {
         Ok(filenames) => read_to_string_from_files(&mut buf, &filenames)?,
